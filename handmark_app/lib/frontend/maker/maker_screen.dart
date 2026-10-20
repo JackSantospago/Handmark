@@ -59,14 +59,13 @@ class MakerScreen extends StatelessWidget {
         const SizedBox(height: 48),
         SectionLabel('Work by ${maker.firstName}'),
         const SizedBox(height: 4),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 32,
-          childAspectRatio: 0.52,
-          children: [for (final p in pieces) PieceCard(piece: p)],
+        LayoutBuilder(
+          builder: (context, constraints) => GridView(
+            gridDelegate: pieceGridDelegate(context, constraints.maxWidth),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [for (final p in pieces) PieceCard(piece: p)],
+          ),
         ),
       ]),
     );

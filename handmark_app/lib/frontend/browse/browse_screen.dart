@@ -69,14 +69,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
         ),
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 32,
-              childAspectRatio: 0.52,
+          sliver: SliverLayoutBuilder(
+            builder: (context, constraints) => SliverGrid(
+              gridDelegate: pieceGridDelegate(context, constraints.crossAxisExtent),
+              delegate: SliverChildBuilderDelegate((context, i) => PieceCard(piece: pieces[i]), childCount: pieces.length),
             ),
-            delegate: SliverChildBuilderDelegate((context, i) => PieceCard(piece: pieces[i]), childCount: pieces.length),
           ),
         ),
       ]),
@@ -119,6 +116,18 @@ class _CertifyBanner extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Two columns whose cells fit the 4:5 image plus a two-line title, maker and price.
+SliverGridDelegate pieceGridDelegate(BuildContext context, double width) {
+  const gap = 16.0;
+  final cell = (width - gap) / 2;
+  return SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: gap,
+    mainAxisSpacing: 32,
+    mainAxisExtent: cell * 5 / 4 + MediaQuery.textScalerOf(context).scale(136),
+  );
 }
 
 /// Photo, verified mark, title, maker, price.
