@@ -18,6 +18,11 @@ an honest line on any machine involvement.
 4. **Request**: send a request → the maker confirms availability **within 48 hours** → finalise payment.
    The 48-hour step is deliberate: nothing is charged before the maker confirms the one-of-one piece is ready.
 5. **Invite**: early-access email capture.
+6. **How we certify**: opened by tapping the "Handmark Verified" mark anywhere. Our four checks
+   (maker, making, materials, piece), what the mark does and does not promise, how hours are checked,
+   and the external certifications we verify at the source (FSC, PEFC, UK hallmark, Fairmined, LWG,
+   food-contact testing). Each piece's provenance record lists its results, including honest
+   "not certified" and "no scheme applies" cases.
 
 ## Run it
 
@@ -27,7 +32,7 @@ flutter run -d chrome -t lib/main_preview.dart
 ```
 
 URL options (all in `lib/preview/preview_options.dart`):
-`?tab=collection|makers|requests|invite`, `?piece=moon-jar`, `?requests=none`, `?theme=dark`,
+`?tab=collection|makers|requests|invite`, `?piece=moon-jar`, `?page=certification`, `?requests=none`, `?theme=dark`,
 `?device=android`, `?frame=off`.
 
 ## Layout

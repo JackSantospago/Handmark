@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/catalog.dart';
 import '../../core/config.dart';
 import '../../core/requests.dart';
+import '../certify/certification_screen.dart';
 import '../maker/maker_screen.dart';
 import '../request/request_screen.dart';
 import '../request/request_status_screen.dart';
@@ -32,8 +33,8 @@ class PieceScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const VerifiedBadge(),
-            const SizedBox(height: 14),
+            const VerifiedBadge(showInfo: true),
+            const SizedBox(height: 10),
             Text(piece.title, style: t.headlineLarge),
             const SizedBox(height: 8),
             InkWell(
@@ -130,7 +131,9 @@ class _Provenance extends StatelessWidget {
         ]),
         const SizedBox(height: 6),
         Text('Checked by Handmark: ${piece.verifiedHow}.', style: t.bodySmall),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
+        const ChecksStrip(),
+        const SizedBox(height: 6),
         const Divider(),
         SpecRow(label: 'Hours of human work', value: '${piece.hours} hours', emphasis: true),
         const Divider(),
@@ -143,6 +146,25 @@ class _Provenance extends StatelessWidget {
         SpecRow(label: 'Made in', value: piece.origin, note: maker.workshop),
         const Divider(),
         SpecRow(label: 'Machine involvement', value: piece.machineNote),
+        if (piece.certs.isNotEmpty) ...[
+          Divider(color: c.outline),
+          const SizedBox(height: 16),
+          Text('EXTERNAL CERTIFICATIONS', style: t.labelSmall?.copyWith(color: c.onSurfaceVariant)),
+          for (final (i, r) in piece.certs.indexed) ...[
+            if (i > 0) const Divider(),
+            CertResultRow(r),
+          ],
+        ],
+        const Divider(),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => openCertification(context),
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            icon: const Icon(Icons.arrow_forward, size: 16),
+            label: const Text('How we certify'),
+          ),
+        ),
       ]),
     );
   }

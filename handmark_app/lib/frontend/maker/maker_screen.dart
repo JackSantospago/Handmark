@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/catalog.dart';
 import '../../core/requests.dart';
 import '../browse/browse_screen.dart';
+import '../certify/certification_screen.dart';
 import '../shared/piece_image.dart';
 import '../shared/ui.dart';
 
@@ -28,10 +29,20 @@ class MakerScreen extends StatelessWidget {
         Text(maker.craft.toUpperCase(), style: t.labelSmall?.copyWith(color: c.onSurfaceVariant)),
         const SizedBox(height: 10),
         Text(maker.name, style: t.headlineLarge),
-        const SizedBox(height: 24),
+        const SizedBox(height: 10),
+        const VerifiedBadge(showInfo: true),
+        const SizedBox(height: 20),
         GroupCard(children: [
           SpecRow(label: 'Workshop', value: maker.location, note: maker.workshop),
           SpecRow(label: 'Working since', value: '${maker.since}'),
+          InkWell(
+            onTap: () => openCertification(context),
+            child: SpecRow(
+              label: 'Verified',
+              value: maker.verifiedOn,
+              note: 'All four Handmark checks passed. Next re-verification ${maker.reviewDue}.',
+            ),
+          ),
           SpecRow(label: 'On Handmark', value: '${pieces.length} verified ${pieces.length == 1 ? 'piece' : 'pieces'}'),
         ]),
         const SizedBox(height: 32),

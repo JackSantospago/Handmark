@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../certify/certification_screen.dart';
+
 /// Small building blocks shared by every page so they look like one product:
 /// a big serif page title, quiet small-caps section labels, and hairline
 /// groups. Icons are thin outlines; colour is kept for the verified mark.
@@ -141,22 +143,37 @@ class RowTile extends StatelessWidget {
 }
 
 /// The trust mark: a thin brass seal and small-caps "Handmark Verified".
+/// Tapping it anywhere opens "How we certify".
 class VerifiedBadge extends StatelessWidget {
-  const VerifiedBadge({super.key, this.compact = false});
+  const VerifiedBadge({super.key, this.compact = false, this.showInfo = false});
   final bool compact;
+
+  /// Adds a small info mark, hinting that the badge can be tapped.
+  final bool showInfo;
 
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).colorScheme;
     final t = Theme.of(context).textTheme;
-    return Row(mainAxisSize: MainAxisSize.min, children: [
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => openCertification(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
       Icon(Icons.verified_outlined, size: compact ? 13 : 15, color: c.secondary),
       SizedBox(width: compact ? 5 : 6),
       Text(
         'HANDMARK VERIFIED',
         style: t.labelSmall?.copyWith(color: c.secondary, fontSize: compact ? 9 : 10.5, letterSpacing: compact ? 1.1 : 1.4),
       ),
-    ]);
+      if (showInfo) ...[
+        const SizedBox(width: 6),
+        Icon(Icons.info_outline, size: 14, color: c.secondary),
+      ],
+        ]),
+      ),
+    );
   }
 }
 

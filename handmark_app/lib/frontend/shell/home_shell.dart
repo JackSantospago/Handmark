@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/requests.dart';
 import '../browse/browse_screen.dart';
+import '../certify/certification_screen.dart';
 import '../invite/invite_screen.dart';
 import '../maker/maker_screen.dart';
 import '../piece/piece_screen.dart';
@@ -9,11 +10,14 @@ import '../request/request_status_screen.dart';
 
 /// Bottom navigation, always visible: Collection · Makers · Requests · Invite.
 /// Piece, maker and request pages are pushed on top.
-/// [openPiece] opens a piece on start (the preview's ?piece= option).
+/// [openPieceId] opens a piece on start (the preview's ?piece= option).
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key, this.initialTab = 0, this.openPieceId});
+  const HomeShell({super.key, this.initialTab = 0, this.openPieceId, this.openCertification = false});
   final int initialTab;
   final String? openPieceId;
+
+  /// Open "How we certify" on start (the preview's ?page=certification option).
+  final bool openCertification;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -25,6 +29,11 @@ class _HomeShellState extends State<HomeShell> {
   @override
   void initState() {
     super.initState();
+    if (widget.openCertification) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) openCertification(context);
+      });
+    }
     final id = widget.openPieceId;
     if (id != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

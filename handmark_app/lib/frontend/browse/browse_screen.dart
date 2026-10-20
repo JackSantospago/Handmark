@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/catalog.dart';
 import '../../core/requests.dart';
+import '../certify/certification_screen.dart';
 import '../piece/piece_screen.dart';
 import '../shared/piece_image.dart';
 import '../shared/ui.dart';
@@ -41,6 +42,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 subtitle: 'Each piece below was made by one maker and verified by us: '
                     'who made it, from what, where, and how many hours it took.',
               ),
+              const _CertifyBanner(),
+              const SizedBox(height: 28),
             ]),
           ),
         ),
@@ -84,6 +87,38 @@ class _BrowseScreenState extends State<BrowseScreen> {
         padding: const EdgeInsets.only(right: 8),
         child: ChoiceChip(label: Text(label), selected: selected, onSelected: (_) => onTap()),
       );
+}
+
+/// Entry point to "How we certify", right under the headline.
+class _CertifyBanner extends StatelessWidget {
+  const _CertifyBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final c = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: () => openCertification(context),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+        decoration: BoxDecoration(border: Border.all(color: c.secondary.withValues(alpha: 0.6))),
+        child: Row(children: [
+          Icon(Icons.verified_outlined, color: c.secondary, size: 26),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('How we certify', style: t.titleMedium),
+              const SizedBox(height: 2),
+              Text('4 checks on every piece, plus FSC, hallmarks and other outside certificates verified at the source.',
+                  style: t.bodySmall),
+            ]),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.arrow_forward, size: 18, color: c.onSurfaceVariant),
+        ]),
+      ),
+    );
+  }
 }
 
 /// Photo, verified mark, title, maker, price.

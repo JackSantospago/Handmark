@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/app_settings.dart';
 import '../../core/config.dart';
+import '../certify/certification_screen.dart';
 import '../shared/ui.dart';
 
 /// Early access: email capture for buyers who want an invitation.
@@ -83,10 +84,11 @@ class _InviteScreenState extends State<InviteScreen> {
         const SizedBox(height: 48),
         const SectionLabel('What members get'),
         GroupCard(children: [
-          const RowTile(
+          RowTile(
             icon: Icons.verified_outlined,
             title: 'Verified in person',
-            subtitle: 'Every maker visited, every piece documented before it is listed.',
+            subtitle: 'Every maker visited, every piece documented before it is listed. See how we certify.',
+            onTap: () => openCertification(context),
           ),
           const RowTile(
             icon: Icons.schedule_outlined,

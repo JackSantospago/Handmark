@@ -50,7 +50,11 @@ class _PreviewAppState extends State<PreviewApp> {
               darkTheme: AppTheme.dark(),
               themeMode: mode,
               builder: PreviewOptions.phoneFrame ? (context, child) => PhoneFrame(themeMode: _themeMode, child: child!) : null,
-              home: HomeShell(initialTab: PreviewOptions.tab, openPieceId: PreviewOptions.piece),
+              home: HomeShell(
+                initialTab: PreviewOptions.tab,
+                openPieceId: PreviewOptions.piece,
+                openCertification: PreviewOptions.certification,
+              ),
             ),
           ),
         ),

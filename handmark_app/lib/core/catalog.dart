@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+import 'certification.dart';
+
 /// What a placeholder photo draws (see frontend/shared/piece_image.dart).
 enum PieceKind { chair, sideTable, decanter, moonJar, canvas, ring, pendant, bowl }
 
@@ -26,6 +28,8 @@ class Maker {
     required this.story,
     required this.quote,
     required this.tone,
+    required this.verifiedOn,
+    required this.reviewDue,
   });
   final String id, name, craft, workshop, location, quote;
   final int since;
@@ -35,6 +39,9 @@ class Maker {
 
   /// Background of the placeholder portrait.
   final Color tone;
+
+  /// Last full verification of the maker and workshop, and the next one due.
+  final String verifiedOn, reviewDue;
 
   String get initials => name.split(' ').where((w) => w.isNotEmpty).take(2).map((w) => w[0]).join();
   String get firstName => name.split(' ').first;
@@ -63,6 +70,7 @@ class Piece {
     required this.backdrop,
     required this.object,
     this.large = false,
+    this.certs = const [],
   });
   final String id, title, makerId, dimensions, method, origin, machineNote, description;
   final Category category;
@@ -78,6 +86,9 @@ class Piece {
 
   /// Ships crated (furniture), which changes the shipping line.
   final bool large;
+
+  /// External certifications checked for this piece (or why none applies).
+  final List<CertRecord> certs;
 }
 
 class Catalog {

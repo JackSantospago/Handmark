@@ -5,6 +5,7 @@
 import 'package:flutter/painting.dart';
 
 import '../core/catalog.dart';
+import '../core/certification.dart';
 import '../core/requests.dart';
 
 const _makers = [
@@ -16,6 +17,8 @@ const _makers = [
     location: 'Bergen, Norway',
     since: 2009,
     tone: Color(0xFF8A7B6A),
+    verifiedOn: 'March 2026',
+    reviewDue: 'March 2027',
     quote: 'A chair is finished when you stop noticing it and start sitting in it.',
     story: [
       'Elin trained as a boatbuilder before she made her first chair. The habits stayed: steam-bent '
@@ -32,6 +35,8 @@ const _makers = [
     location: 'Manises, Spain',
     since: 2004,
     tone: Color(0xFF5E6B6A),
+    verifiedOn: 'April 2026',
+    reviewDue: 'April 2027',
     quote: 'Glass tells you everything about the hand that made it, if you hold it to the light.',
     story: [
       'Mateo learned off-hand glassblowing in Murano and brought it home to a town known for clay. '
@@ -47,6 +52,8 @@ const _makers = [
     location: 'Mashiko, Japan',
     since: 2011,
     tone: Color(0xFF9C9183),
+    verifiedOn: 'February 2026',
+    reviewDue: 'February 2027',
     quote: 'I throw the jar in two halves. Where they meet is where it becomes mine.',
     story: [
       'Aiko makes moon jars the traditional way: two thrown bowls joined at the rim, then trimmed, '
@@ -62,6 +69,8 @@ const _makers = [
     location: 'Arles, France',
     since: 2002,
     tone: Color(0xFF7C6E62),
+    verifiedOn: 'November 2025',
+    reviewDue: 'November 2026',
     quote: 'I paint the same field every season, and it never agrees to be the same painting.',
     story: [
       'Clara paints in oil on hand-primed linen, working from small studies made outdoors in the Camargue.',
@@ -76,6 +85,8 @@ const _makers = [
     location: 'Birmingham, United Kingdom',
     since: 2013,
     tone: Color(0xFF6B5D4F),
+    verifiedOn: 'May 2026',
+    reviewDue: 'May 2027',
     quote: 'Recycled gold has already had one life. I try to give it a longer second one.',
     story: [
       'Kofi forges, carves and finishes every piece at a single bench, using recycled 18k gold and '
@@ -91,6 +102,8 @@ const _makers = [
     location: 'Hebden Bridge, United Kingdom',
     since: 2015,
     tone: Color(0xFF857560),
+    verifiedOn: 'February 2026',
+    reviewDue: 'February 2027',
     quote: 'Every bowl starts as a tree someone needed to take down. I just slow the ending.',
     story: [
       'Rowan turns bowls from storm-felled and arborist-removed trees within twenty miles of the barn.',
@@ -118,6 +131,11 @@ const _pieces = [
         'vegetable-tanned leather that will darken with use.',
     verificationId: 'HM-2026-0142',
     verifiedHow: 'Workshop visit, March 2026',
+    certs: [
+      CertRecord('pefc', CertStatus.verified,
+          'Ash from a PEFC-certified forest in Vestland. Supplier certificate checked on the PEFC register, Feb 2026.'),
+      CertRecord('lwg', CertStatus.verified, 'Seat leather from an LWG Gold-rated tannery. Rating confirmed in the LWG directory, Feb 2026.'),
+    ],
     backdrop: Color(0xFFE6DFD4),
     object: Color(0xFF8C6A4A),
     large: true,
@@ -140,6 +158,10 @@ const _pieces = [
         'firebox, leaving a soft green run down one side.',
     verificationId: 'HM-2026-0117',
     verifiedHow: 'Video call during firing, February 2026',
+    certs: [
+      CertRecord('food', CertStatus.verified,
+          'Ash glaze lab-tested for lead and cadmium release, within EU limits. Report from an accredited lab, Jan 2026.'),
+    ],
     backdrop: Color(0xFFDAD5CC),
     object: Color(0xFFEDE7DA),
   ),
@@ -161,6 +183,9 @@ const _pieces = [
         'in the glass are a mark of the furnace, not a flaw.',
     verificationId: 'HM-2026-0156',
     verifiedHow: 'Workshop visit, April 2026',
+    certs: [
+      CertRecord('food', CertStatus.verified, 'Glass batch lab-tested for lead and cadmium release, within EU limits. Report dated Mar 2026.'),
+    ],
     backdrop: Color(0xFFE3E1DB),
     object: Color(0xFF7D7A70),
   ),
@@ -181,6 +206,10 @@ const _pieces = [
     description: 'A wide, quiet landscape of salt marsh at dusk in ochre, grey-green and a band of pale rose.',
     verificationId: 'HM-2025-0098',
     verifiedHow: 'Studio visit, November 2025',
+    certs: [
+      CertRecord('', CertStatus.notApplicable,
+          'No external scheme certifies original paintings. Authorship confirmed by studio visit; signed certificate of authenticity.'),
+    ],
     backdrop: Color(0xFFE9E5DE),
     object: Color(0xFFB59A6E),
     large: true,
@@ -202,6 +231,12 @@ const _pieces = [
     description: 'A substantial signet with a softly domed face, left blank or hand-carved with your initials.',
     verificationId: 'HM-2026-0163',
     verifiedHow: 'Workshop visit and assay certificate, May 2026',
+    certs: [
+      CertRecord('hallmark', CertStatus.verified,
+          '18k (750) gold, hallmarked at the Birmingham Assay Office. Marks inspected and sponsor mark confirmed, May 2026.'),
+      CertRecord('fairmined', CertStatus.notCertified,
+          "Not Fairmined: the gold is recycled, not newly mined. Refiner's recycled-content declaration on file."),
+    ],
     backdrop: Color(0xFFDCD6CE),
     object: Color(0xFFC29A4F),
   ),
@@ -222,6 +257,10 @@ const _pieces = [
     description: 'A compact side table with a thick oak top and a softly faceted column, finished with soap flakes.',
     verificationId: 'HM-2026-0144',
     verifiedHow: 'Workshop visit, March 2026',
+    certs: [
+      CertRecord('fsc', CertStatus.verified,
+          'FSC 100% oak. Licence code checked on the FSC public certificate search and matched to the timber invoice, Mar 2026.'),
+    ],
     backdrop: Color(0xFFE4DED5),
     object: Color(0xFFA88B67),
     large: true,
@@ -243,6 +282,10 @@ const _pieces = [
     description: 'A small forged drop with a hammered surface that catches the light like water.',
     verificationId: 'HM-2026-0164',
     verifiedHow: 'Workshop visit and assay certificate, May 2026',
+    certs: [
+      CertRecord('hallmark', CertStatus.verified,
+          'Sterling (925) silver. Under the UK legal weight threshold for silver, hallmarked voluntarily; marks inspected May 2026.'),
+    ],
     backdrop: Color(0xFFDEDBD6),
     object: Color(0xFFB8B6B0),
   ),
@@ -263,6 +306,10 @@ const _pieces = [
     description: 'A wide serving bowl from an oak felled in the 2024 winter storms, with dark medullary rays across the rim.',
     verificationId: 'HM-2026-0129',
     verifiedHow: 'Workshop visit, February 2026',
+    certs: [
+      CertRecord('fsc', CertStatus.notCertified,
+          "Not FSC-certified: the oak was storm-felled on a private farm, not taken from a managed forest. The arborist's felling record is on file."),
+    ],
     backdrop: Color(0xFFE2DCD2),
     object: Color(0xFF7A5B3E),
   ),
