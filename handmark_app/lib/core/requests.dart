@@ -8,16 +8,25 @@ import 'config.dart';
 enum RequestStage { awaitingMaker, confirmed, paid, declined }
 
 class OrderRequest {
-  OrderRequest({required this.id, required this.piece, required this.sentAt, this.note = '', this.shipTo = ''});
+  OrderRequest({
+    required this.id,
+    required this.piece,
+    required this.sentAt,
+    required this.shipping,
+    this.note = '',
+    this.shipTo = '',
+  });
   final String id;
   final Piece piece;
+
+  /// Shipping estimate at the time of the request (Catalog.shippingFor).
+  final int shipping;
   final DateTime sentAt;
   final String note, shipTo;
   RequestStage stage = RequestStage.awaitingMaker;
   DateTime? confirmedAt, paidAt;
 
   DateTime get confirmBy => sentAt.add(kConfirmWindow);
-  int get shipping => piece.large ? kShippingLarge : kShippingSmall;
   int get total => piece.priceUsd + shipping;
 }
 
@@ -26,8 +35,15 @@ class RequestStore extends ChangeNotifier {
   final List<OrderRequest> items = [];
   int _next = 1;
 
-  OrderRequest submit(Piece piece, {String note = '', String shipTo = '', DateTime? at}) {
-    final r = OrderRequest(id: 'R-${1040 + _next++}', piece: piece, sentAt: at ?? DateTime.now(), note: note, shipTo: shipTo);
+  OrderRequest submit(Piece piece, {required int shipping, String note = '', String shipTo = '', DateTime? at}) {
+    final r = OrderRequest(
+      id: 'R-${1040 + _next++}',
+      piece: piece,
+      sentAt: at ?? DateTime.now(),
+      shipping: shipping,
+      note: note,
+      shipTo: shipTo,
+    );
     items.insert(0, r);
     notifyListeners();
     return r;

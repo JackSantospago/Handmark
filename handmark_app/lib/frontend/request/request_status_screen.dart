@@ -127,7 +127,7 @@ class _RequestStatusScreenState extends State<RequestStatusScreen> {
             SpecRow(
               label: 'Shipping',
               value: usd(r.shipping),
-              note: r.piece.large ? 'Insured, crated, white-glove delivery' : 'Insured, signed for',
+              note: context.catalog.shippingNoteFor(r.piece),
             ),
             SpecRow(label: 'Total', value: usd(r.total), emphasis: true),
           ]),

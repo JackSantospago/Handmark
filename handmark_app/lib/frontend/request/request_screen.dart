@@ -19,7 +19,7 @@ class RequestScreen extends StatefulWidget {
 
 class _RequestScreenState extends State<RequestScreen> {
   final _note = TextEditingController();
-  final _shipTo = TextEditingController(text: 'Italy');
+  final _shipTo = TextEditingController(text: 'Boston, MA');
 
   @override
   void dispose() {
@@ -29,7 +29,12 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   void _send() {
-    final r = context.requests.submit(widget.piece, note: _note.text.trim(), shipTo: _shipTo.text.trim());
+    final r = context.requests.submit(
+      widget.piece,
+      shipping: context.catalog.shippingFor(widget.piece),
+      note: _note.text.trim(),
+      shipTo: _shipTo.text.trim(),
+    );
     Navigator.of(context).pushReplacement(MaterialPageRoute<void>(builder: (_) => RequestStatusScreen(request: r)));
   }
 
@@ -38,7 +43,9 @@ class _RequestScreenState extends State<RequestScreen> {
     final t = Theme.of(context).textTheme;
     final c = Theme.of(context).colorScheme;
     final piece = widget.piece;
-    final maker = context.catalog.makerOf(piece);
+    final catalog = context.catalog;
+    final maker = catalog.makerOf(piece);
+    final shipping = catalog.shippingFor(piece);
 
     return Scaffold(
       appBar: AppBar(title: const Text('REQUEST')),
@@ -81,7 +88,22 @@ class _RequestScreenState extends State<RequestScreen> {
           ),
         ),
         const SizedBox(height: 14),
-        TextField(controller: _shipTo, decoration: const InputDecoration(labelText: 'Deliver to (country)')),
+        TextField(
+          controller: _shipTo,
+          decoration: const InputDecoration(labelText: 'Deliver to', helperText: 'Shipping is estimated for US delivery.'),
+        ),
+        const SizedBox(height: 32),
+        const SectionLabel('Summary'),
+        GroupCard(children: [
+          SpecRow(label: 'Piece', value: usd(piece.priceUsd)),
+          SpecRow(label: 'Shipping', value: usd(shipping), note: catalog.shippingNoteFor(piece)),
+          SpecRow(
+            label: 'Total',
+            value: usd(piece.priceUsd + shipping),
+            emphasis: true,
+            note: 'Charged only after ${maker.firstName} confirms.',
+          ),
+        ]),
         const SizedBox(height: 28),
         FilledButton(onPressed: _send, child: const Text('Send request')),
         const SizedBox(height: 10),

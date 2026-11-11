@@ -15,16 +15,30 @@ class BrowseScreen extends StatefulWidget {
   State<BrowseScreen> createState() => _BrowseScreenState();
 }
 
+/// Price bands for the filter chips (USD, inclusive).
+enum PriceBand {
+  all('All', 0, null),
+  under150('Under \$150', 0, 149),
+  mid('\$150–\$1,000', 150, 1000),
+  high('\$1,000+', 1001, null);
+
+  const PriceBand(this.label, this.min, this.max);
+  final String label;
+  final int min;
+  final int? max;
+
+  bool includes(Piece p) => p.priceUsd >= min && (max == null || p.priceUsd <= max!);
+}
+
 class _BrowseScreenState extends State<BrowseScreen> {
-  Category? _filter;
+  PriceBand _band = PriceBand.all;
 
   @override
   Widget build(BuildContext context) {
     final catalog = context.catalog;
     final t = Theme.of(context).textTheme;
     final c = Theme.of(context).colorScheme;
-    final pieces = [for (final p in catalog.pieces) if (_filter == null || p.category == _filter) p];
-    final categories = [for (final cat in Category.values) if (catalog.pieces.any((p) => p.category == cat)) cat];
+    final pieces = [for (final p in catalog.pieces) if (_band.includes(p)) p];
 
     return SafeArea(
       bottom: false,
@@ -54,8 +68,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
               scrollDirection: Axis.horizontal,
               padding: kPage,
               children: [
-                _chip('All', _filter == null, () => setState(() => _filter = null)),
-                for (final cat in categories) _chip(cat.label, _filter == cat, () => setState(() => _filter = cat)),
+                for (final b in PriceBand.values) _chip(b.label, _band == b, () => setState(() => _band = b)),
               ],
             ),
           ),

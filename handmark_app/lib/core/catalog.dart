@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'certification.dart';
+import 'config.dart';
 
 /// What a placeholder photo draws (see frontend/shared/piece_image.dart).
 enum PieceKind { chair, sideTable, decanter, moonJar, canvas, ring, pendant, bowl }
@@ -30,8 +31,12 @@ class Maker {
     required this.tone,
     required this.verifiedOn,
     required this.reviewDue,
+    this.inUs = false,
   });
   final String id, name, craft, workshop, location, quote;
+
+  /// Works in the US, which changes the shipping estimate for small pieces.
+  final bool inUs;
   final int since;
 
   /// Paragraphs.
@@ -45,6 +50,9 @@ class Maker {
 
   String get initials => name.split(' ').where((w) => w.isNotEmpty).take(2).map((w) => w[0]).join();
   String get firstName => name.split(' ').first;
+
+  /// Last part of [location], e.g. "Spain".
+  String get country => location.split(', ').last;
 }
 
 /// One listing with its provenance record: who made it, from what, how, where,
@@ -84,7 +92,7 @@ class Piece {
   /// Colours of the placeholder photo.
   final Color backdrop, object;
 
-  /// Ships crated (furniture), which changes the shipping line.
+  /// Ships crated (furniture, large canvases), which changes the shipping estimate.
   final bool large;
 
   /// External certifications checked for this piece (or why none applies).
@@ -100,6 +108,16 @@ class Catalog {
   Piece? piece(String id) => pieces.where((p) => p.id == id).firstOrNull;
   Maker makerOf(Piece p) => maker(p.makerId);
   List<Piece> piecesBy(String makerId) => [for (final p in pieces) if (p.makerId == makerId) p];
+
+  /// Estimated shipping to a US address (see config.dart).
+  int shippingFor(Piece p) => p.large ? kShippingLarge : (makerOf(p).inUs ? kShippingSmallUs : kShippingSmallIntl);
+
+  /// One line on how it ships.
+  String shippingNoteFor(Piece p) => p.large
+      ? 'Insured, crated, white-glove delivery'
+      : makerOf(p).inUs
+          ? 'Insured, tracked, from a US studio'
+          : 'Insured, tracked, from ${makerOf(p).country}';
 }
 
 /// $4,200

@@ -15,67 +15,95 @@ void openPiece(BuildContext context, Piece piece) =>
 
 /// One piece: hero image, price, and the provenance record front and centre.
 /// The primary action is "Request this piece" (no payment until the maker confirms).
-class PieceScreen extends StatelessWidget {
+class PieceScreen extends StatefulWidget {
   const PieceScreen({super.key, required this.piece});
   final Piece piece;
 
   @override
+  State<PieceScreen> createState() => _PieceScreenState();
+}
+
+class _PieceScreenState extends State<PieceScreen> {
+  final _recordKey = GlobalKey();
+
+  void _showRecord() {
+    final ctx = _recordKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 450), alignment: 0.05);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final piece = widget.piece;
     final t = Theme.of(context).textTheme;
     final c = Theme.of(context).colorScheme;
-    final maker = context.catalog.makerOf(piece);
+    final catalog = context.catalog;
+    final maker = catalog.makerOf(piece);
     final open = context.requests.openFor(piece);
+    final shipping = catalog.shippingFor(piece);
 
     return Scaffold(
       appBar: AppBar(title: Text(piece.category.label.toUpperCase())),
-      body: ListView(padding: EdgeInsets.zero, children: [
-        PieceImage(piece, aspectRatio: 4 / 4.6),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const VerifiedBadge(showInfo: true),
-            const SizedBox(height: 10),
-            Text(piece.title, style: t.headlineLarge),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: () => openMaker(context, maker),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'by ', style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
-                TextSpan(
-                  text: maker.name,
-                  style: t.bodyMedium?.copyWith(decoration: TextDecoration.underline, decorationColor: c.outline),
-                ),
-                TextSpan(text: '  ·  ${piece.year}', style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
-              ])),
-            ),
-            const SizedBox(height: 20),
-            Text(usd(piece.priceUsd), style: t.headlineSmall),
-            const SizedBox(height: 4),
-            Text('One of one  ·  ${piece.dimensions}', style: t.bodySmall),
-            const SizedBox(height: 28),
-            Text(piece.description, style: t.bodyLarge),
-            const SizedBox(height: 40),
-            _Provenance(piece: piece, maker: maker),
-            const SizedBox(height: 40),
-            const SectionLabel('The maker'),
-            GroupCard(children: [
-              RowTile(
-                leading: MakerPortrait(maker, size: 52),
-                title: maker.name,
-                subtitle: '${maker.craft}, ${maker.location}',
+      // A Column in a scroll view (not a lazy ListView) so the summary can
+      // scroll to the full record.
+      body: SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          PieceImage(piece, aspectRatio: 4 / 4.6),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const VerifiedBadge(showInfo: true),
+              const SizedBox(height: 10),
+              Text(piece.title, style: t.headlineLarge),
+              const SizedBox(height: 8),
+              InkWell(
                 onTap: () => openMaker(context, maker),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'by ', style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
+                  TextSpan(
+                    text: maker.name,
+                    style: t.bodyMedium?.copyWith(decoration: TextDecoration.underline, decorationColor: c.outline),
+                  ),
+                  TextSpan(text: '  ·  ${piece.year}', style: t.bodyMedium?.copyWith(color: c.onSurfaceVariant)),
+                ])),
               ),
+              const SizedBox(height: 20),
+              Text(usd(piece.priceUsd), style: t.headlineSmall),
+              const SizedBox(height: 4),
+              Text('One of one  ·  ${piece.dimensions}', style: t.bodySmall),
+              const SizedBox(height: 10),
+              Text('+ ${usd(shipping)} shipping to the US  ·  ${catalog.shippingNoteFor(piece)}', style: t.bodySmall),
+              const SizedBox(height: 2),
+              Text('Estimated total ${usd(piece.priceUsd + shipping)}',
+                  style: t.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+              const SizedBox(height: 20),
+              _ProvenanceSummary(piece: piece, maker: maker, onShowRecord: _showRecord),
+              const SizedBox(height: 28),
+              Text(piece.description, style: t.bodyLarge),
+              const SizedBox(height: 40),
+              KeyedSubtree(key: _recordKey, child: _Provenance(piece: piece, maker: maker)),
+              const SizedBox(height: 40),
+              const SectionLabel('The maker'),
+              GroupCard(children: [
+                RowTile(
+                  leading: MakerPortrait(maker, size: 52),
+                  title: maker.name,
+                  subtitle: '${maker.craft}, ${maker.location}',
+                  onTap: () => openMaker(context, maker),
+                ),
+              ]),
+              const SizedBox(height: 32),
+              Text(
+                'Free returns within $kReturnDays days of delivery. A signed provenance certificate '
+                'travels with every piece.',
+                style: t.bodySmall,
+              ),
+              const SizedBox(height: 32),
             ]),
-            const SizedBox(height: 32),
-            Text(
-              'Free returns within $kReturnDays days of delivery. A signed provenance certificate '
-              'travels with every piece.',
-              style: t.bodySmall,
-            ),
-            const SizedBox(height: 32),
-          ]),
-        ),
-      ]),
+          ),
+        ]),
+      ),
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(color: c.surface, border: Border(top: BorderSide(color: c.outlineVariant))),
         child: SafeArea(
@@ -83,6 +111,13 @@ class PieceScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 14, 24, 14),
             child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(
+                'Nothing is charged until ${maker.firstName} confirms the piece is ready, within '
+                '${kConfirmWindow.inHours} hours, so it is never sold twice.',
+                style: t.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: open == null
@@ -96,16 +131,53 @@ class PieceScreen extends StatelessWidget {
                         child: const Text('View your request'),
                       ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'No payment now. ${maker.firstName} confirms availability within ${kConfirmWindow.inHours} hours.',
-                style: t.bodySmall,
-                textAlign: TextAlign.center,
-              ),
             ]),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The short version of the record, right under the price: who made it, how
+/// many hours of handwork, from what, and the mark. The full record is below.
+class _ProvenanceSummary extends StatelessWidget {
+  const _ProvenanceSummary({required this.piece, required this.maker, required this.onShowRecord});
+  final Piece piece;
+  final Maker maker;
+  final VoidCallback onShowRecord;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final c = Theme.of(context).colorScheme;
+    Widget line(IconData icon, String text) => Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Icon(icon, size: 17, color: c.onSurfaceVariant),
+            const SizedBox(width: 10),
+            Expanded(child: Text(text, style: t.bodyMedium)),
+          ]),
+        );
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      decoration: BoxDecoration(
+        color: c.secondaryContainer.withValues(alpha: 0.35),
+        border: Border.all(color: c.secondary.withValues(alpha: 0.6)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const VerifiedBadge(showInfo: true),
+        line(Icons.person_outline, 'Made by ${maker.name} in ${maker.location}'),
+        line(Icons.back_hand_outlined, '${piece.hours} ${piece.hours == 1 ? 'hour' : 'hours'} of handwork'),
+        line(Icons.layers_outlined, piece.materials.join(', ')),
+        const SizedBox(height: 4),
+        TextButton.icon(
+          onPressed: onShowRecord,
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+          icon: const Icon(Icons.arrow_downward, size: 16),
+          label: Text('Full provenance record  ·  ${piece.verificationId}'),
+        ),
+      ]),
     );
   }
 }

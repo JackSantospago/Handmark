@@ -16,8 +16,16 @@ const kShipWithinDays = 7;
 /// Return window after delivery.
 const kReturnDays = 14;
 
-/// Demo shipping: insured, crated where needed, flat by size class (USD).
-const kShippingSmall = 45;
+/// DEMO CONTENT: shipping estimates for delivery within the US (the demo
+/// buyer ships to Boston), in USD. Shown on the piece page before requesting
+/// and again in the request summary with the total.
+/// Small piece from a US maker: insured, tracked parcel.
+const kShippingSmallUs = 15;
+
+/// Small piece from a maker outside the US: insured, tracked international parcel.
+const kShippingSmallIntl = 45;
+
+/// Large piece (furniture, large canvases): crated, white-glove delivery.
 const kShippingLarge = 380;
 
 /// Where the "About this demo" link under the phone points.
